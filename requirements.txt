@@ -1,0 +1,4 @@
+# TechDraw Pipeline Dependencies
+ezdxf>=1.0.0
+matplotlib>=3.5.0
+lxml>=4.6.0
