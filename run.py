@@ -276,9 +276,9 @@ try:
                 front_view_height = actual_depth * auto_scale
 
                 # Tính margin và reserved areas
-                margin_for_dims = 35      # Margin lớn hơn cho dimensions
+                margin_for_dims = 25      # Margin nhỏ hơn cho dimensions
                 text_height = 12          # Chiều cao text labels
-                dimension_space = 20      # Space cho dimension lines
+                dimension_space = 15      # Space nhỏ hơn cho dimension lines
                 title_block_height = 50   # Reserved space cho title block
 
                 # Tính effective drawing area (tránh title block)
@@ -290,11 +290,11 @@ try:
                 total_views_height = top_view_height + front_view_height + dimension_space * 2
 
                 # Tính spacing để distribute evenly trong available space
-                horizontal_spacing = max(25, (effective_width - total_views_width) / 3)
+                horizontal_spacing = max(15, (effective_width - total_views_width) / 3)
                 vertical_spacing = max(20, (effective_height - total_views_height) / 3)
 
                 # Đảm bảo spacing không quá lớn (để tránh views quá xa nhau)
-                horizontal_spacing = min(horizontal_spacing, 50)
+                horizontal_spacing = min(horizontal_spacing, 25)
                 vertical_spacing = min(vertical_spacing, 40)
 
                 # Top View: Góc trên trái với margin an toàn
@@ -330,11 +330,11 @@ try:
                 fallback_height = 50 * auto_scale
                 fallback_depth = 5 * auto_scale
 
-                margin_for_dims = 35
+                margin_for_dims = 25
                 text_height = 12
-                dimension_space = 20
+                dimension_space = 15
                 title_block_height = 50
-                horizontal_spacing = 30
+                horizontal_spacing = 20
                 vertical_spacing = 25
 
                 top_view_x = drawing_start_x + margin_for_dims + horizontal_spacing
@@ -564,7 +564,7 @@ try:
       <line x1="-8" y1="0" x2="-2" y2="0"/>
       <line x1="-8" y1="-{actual_height}" x2="-2" y2="-{actual_height}"/>
       <polygon points="-10,0 -9,-1.0 -11,-1.0" fill="blue"/>
-      <polygon points="-10,-{actual_height} -9,-{actual_height+1.0} -11,-{actual_height+1.0}" fill="blue"/>
+      <polygon points="-10,-{actual_height} -9,-{actual_height-1.0} -11,-{actual_height-1.0}" fill="blue"/>
       <text x="-17" y="-{actual_height/2}" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,-17,-{actual_height/2})">{actual_height:.0f}</text>'''
 
                 # Thêm dimensions cho lỗ (nếu có)
@@ -627,11 +627,11 @@ try:
                 drawing_content += f'''
     <!-- Thickness dimension -->
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <line x1="{side_width + 5}" y1="-2" x2="{side_width + 5}" y2="{side_height + 2}"/>
+      <line x1="{side_width + 5}" y1="0" x2="{side_width + 5}" y2="{side_height}"/>
       <line x1="{side_width + 3}" y1="0" x2="{side_width + 7}" y2="0"/>
       <line x1="{side_width + 3}" y1="{side_height}" x2="{side_width + 7}" y2="{side_height}"/>
-      <polygon points="{side_width + 5},-2 {side_width + 4.5},0 {side_width + 5.5},0" fill="blue"/>
-      <polygon points="{side_width + 5},{side_height + 2} {side_width + 4.5},{side_height} {side_width + 5.5},{side_height}" fill="blue"/>
+      <polygon points="{side_width + 5},0 {side_width + 4.5},1.0 {side_width + 5.5},1.0" fill="blue"/>
+      <polygon points="{side_width + 5},{side_height} {side_width + 4.5},{side_height-1.0} {side_width + 5.5},{side_height-1.0}" fill="blue"/>
       <text x="{side_width + 12}" y="{side_height/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_height/2})">{side_height:.0f}</text>
     </g>'''
             else:
