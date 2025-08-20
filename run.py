@@ -532,9 +532,13 @@ try:
             # Tạo dimensions tự động dựa trên geometry thực tế
             if bbox:
 
-                # Tìm tâm của các lỗ tròn thực sự (không phải bo góc)
+                # Tìm tâm của các lỗ tròn thực sự (không phải bo góc) và các bo góc
                 hole_centers = []
                 hole_radii = []
+                fillet_centers = []
+                fillet_radii = []
+                unique_fillet_radii = []  # Để theo dõi các bán kính bo góc duy nhất
+
                 if edges:
                     for i, edge in enumerate(edges):
                         try:
@@ -552,6 +556,16 @@ try:
                                         radius = curve.Radius
                                         hole_centers.append((center.x, center.y))  # Hình xuống dưới
                                         hole_radii.append(radius)
+                                    else:  # Đây là arc (bo góc)
+                                        center = curve.Center
+                                        radius = curve.Radius
+                                        fillet_centers.append((center.x, center.y))
+                                        fillet_radii.append(radius)
+
+                                        # Thêm vào danh sách bán kính duy nhất nếu chưa có
+                                        radius_rounded = round(radius, 2)  # Làm tròn để so sánh
+                                        if radius_rounded not in unique_fillet_radii:
+                                            unique_fillet_radii.append(radius_rounded)
                         except:
                             pass
 
@@ -583,6 +597,54 @@ try:
       <polygon points="{hx + hr*0.7 + 10},{hy + hr*0.7 + 10} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 9.5} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 10.5}" fill="blue"/>
       <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="Arial, sans-serif" font-size="2.1">Ø{hr*2:.0f}</text>'''
 
+                # Thêm dimensions cho bán kính bo góc (chỉ hiển thị 1 lần cho mỗi bán kính duy nhất)
+                if unique_fillet_radii and fillet_centers and fillet_radii:
+                    print(f"Adding radius dimensions for {len(unique_fillet_radii)} unique fillet radii")
+                    # Tìm vị trí tốt nhất để đặt dimension cho mỗi bán kính duy nhất
+                    for i, unique_radius in enumerate(unique_fillet_radii):
+                        # Tìm bo góc đầu tiên có bán kính này
+                        for j, ((fx, fy), fr) in enumerate(zip(fillet_centers, fillet_radii)):
+                            if abs(fr - unique_radius) < 0.01:  # So sánh với tolerance
+                                # Tính vị trí dimension line cho bo góc này
+                                # Đặt dimension ở góc 45 độ từ tâm bo góc để tránh chồng lấp
+                                dim_offset = fr + 8  # Khoảng cách từ tâm đến dimension line
+                                dim_x = fx + dim_offset * 0.707  # cos(45°) ≈ 0.707
+                                dim_y = fy + dim_offset * 0.707  # sin(45°) ≈ 0.707
+
+                                # Vẽ dimension line từ điểm dimension về tâm bo góc với mũi tên chỉ vào tâm
+                                # Tính vector hướng từ text về tâm để vẽ mũi tên đúng hướng
+                                arrow_vec_x = fx - dim_x
+                                arrow_vec_y = fy - dim_y
+                                arrow_length = (arrow_vec_x**2 + arrow_vec_y**2)**0.5
+
+                                # Normalize vector và tính điểm mũi tên
+                                if arrow_length > 0:
+                                    arrow_unit_x = arrow_vec_x / arrow_length
+                                    arrow_unit_y = arrow_vec_y / arrow_length
+
+                                    # Mũi tên chỉ vào tâm bo góc
+                                    arrow_tip_x = fx
+                                    arrow_tip_y = fy
+                                    arrow_base_x = fx - arrow_unit_x * 2.0
+                                    arrow_base_y = fy - arrow_unit_y * 2.0
+
+                                    # Tính điểm cánh mũi tên (perpendicular)
+                                    perp_x = -arrow_unit_y * 0.8
+                                    perp_y = arrow_unit_x * 0.8
+
+                                    arrow_wing1_x = arrow_base_x + perp_x
+                                    arrow_wing1_y = arrow_base_y + perp_y
+                                    arrow_wing2_x = arrow_base_x - perp_x
+                                    arrow_wing2_y = arrow_base_y - perp_y
+
+                                drawing_content += f'''
+      <!-- Fillet radius dimension R{unique_radius:.0f} -->
+      <line x1="{dim_x}" y1="{dim_y}" x2="{fx}" y2="{fy}" stroke="blue" stroke-width="0.25"/>
+      <polygon points="{arrow_tip_x},{arrow_tip_y} {arrow_wing1_x},{arrow_wing1_y} {arrow_wing2_x},{arrow_wing2_y}" fill="blue"/>
+      <text x="{dim_x + 2}" y="{dim_y - 1}" font-family="Arial, sans-serif" font-size="2.1">R{unique_radius:.0f}</text>'''
+                                print(f"Added radius dimension R{unique_radius:.0f} at fillet center ({fx:.1f},{fy:.1f})")
+                                break  # Chỉ vẽ dimension cho bo góc đầu tiên có bán kính này
+
                 # Thêm center lines cho lỗ - hình vẽ xuống dưới
                 if hole_centers:
                     drawing_content += '''
@@ -595,6 +657,7 @@ try:
                     drawing_content += '''
       </g>'''
 
+                # Close the dimensions group
                 drawing_content += '''
     </g>
   </g>'''
