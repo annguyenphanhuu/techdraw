@@ -258,9 +258,9 @@ try:
                 auto_scale *= 0.45  # Tăng scale factor để views lớn hơn
 
                 # Tính font size cho dimensions (thống nhất cho tất cả số)
-                base_font_size = 5.0  # Kích thước font chuẩn cho tất cả dimension
+                base_font_size = 4.0  # Giảm kích thước font dimension xuống một chút
                 dimension_font_size = base_font_size / auto_scale
-                dimension_font_size = max(4.5, min(dimension_font_size, 8.0))  # Giới hạn hợp lý
+                dimension_font_size = max(3.5, min(dimension_font_size, 7.0))  # Giảm giới hạn tương ứng
 
                 # Tính vị trí dựa trên drawing area thực tế
                 # Drawing area: x=20, y=10, width=267, height=190 (từ template)
@@ -321,7 +321,7 @@ try:
             else:
                 # Fallback values với conservative layout
                 auto_scale = 0.5  # Scale nhỏ hơn để an toàn
-                dimension_font_size = 5.0  # Kích thước font thống nhất
+                dimension_font_size = 4.0  # Giảm kích thước font dimension xuống một chút
                 drawing_start_x = 20
                 drawing_start_y = 10
 

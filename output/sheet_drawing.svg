@@ -1023,7 +1023,7 @@
       <line x1="200.0" y1="-8" x2="200.0" y2="-2"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="200.0,-10 199.0,-9 199.0,-11" fill="blue"/>
-      <text x="100.0" y="-17" font-family="Arial, sans-serif" font-size="8.0" text-anchor="middle">200</text>
+      <text x="100.0" y="-17" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle">200</text>
 
       <!-- Height dimension -->
       <line x1="210.0" y1="0" x2="210.0" y2="100.0"/>
@@ -1031,11 +1031,11 @@
       <line x1="208.0" y1="100.0" x2="202.0" y2="100.0"/>
       <polygon points="210.0,0 209.0,1.0 211.0,1.0" fill="blue"/>
       <polygon points="210.0,100.0 209.0,99.0 211.0,99.0" fill="blue"/>
-      <text x="217.0" y="50.0" font-family="Arial, sans-serif" font-size="8.0" text-anchor="middle" transform="rotate(-90,217.0,50.0)">100</text>
+      <text x="217.0" y="50.0" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle" transform="rotate(-90,217.0,50.0)">100</text>
       <!-- Fillet radius dimension R5 -->
       <line x1="14.190999999999999" y1="14.190999999999999" x2="5.0" y2="5.0" stroke="blue" stroke-width="0.25"/>
       <polygon points="5.0,5.0 6.979898987322333,5.848528137423857 5.848528137423857,6.979898987322333" fill="blue"/>
-      <text x="16.191" y="13.190999999999999" font-family="Arial, sans-serif" font-size="8.0">R5</text>
+      <text x="16.191" y="13.190999999999999" font-family="Arial, sans-serif" font-size="7.0">R5</text>
     </g>
   </g>
   <!-- Right side view showing thickness -->
@@ -1048,7 +1048,7 @@
       <line x1="203.0" y1="0" x2="207.0" y2="0"/>
       <polygon points="205.0,-3.0 204.5,-2.0 205.5,-2.0" fill="blue"/>
       <polygon points="205.0,0 204.5,-1.0 205.5,-1.0" fill="blue"/>
-      <text x="212.0" y="-1.5" font-family="Arial, sans-serif" font-size="8.0" text-anchor="middle" transform="rotate(-90,212.0,-1.5)">3</text>
+      <text x="212.0" y="-1.5" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle" transform="rotate(-90,212.0,-1.5)">3</text>
     </g>
   </g>
 
@@ -1062,7 +1062,7 @@
       <line x1="100.0" y1="3" x2="100.0" y2="-1"/>
       <polygon points="0,5 1.0,4 1.0,6" fill="blue"/>
       <polygon points="100.0,5 99.0,4 99.0,6" fill="blue"/>
-      <text x="50.0" y="10" font-family="Arial, sans-serif" font-size="8.0" text-anchor="middle">100</text>
+      <text x="50.0" y="10" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle">100</text>
     </g>
   </g>
 
