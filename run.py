@@ -574,16 +574,16 @@ try:
     <g stroke="blue" stroke-width="0.25" fill="none">
       <!-- Width dimension -->
       <line x1="0" y1="-10" x2="{actual_width}" y2="-10"/>
-      <line x1="0" y1="-8" x2="0" y2="-2"/>
-      <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2"/>
+      <line x1="0" y1="-8" x2="0" y2="-2" stroke-width="0.18"/>
+      <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2" stroke-width="0.18"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="{actual_width},-10 {actual_width-1.0},-9 {actual_width-1.0},-11" fill="blue"/>
       <text x="{actual_width/2}" y="-17" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
 
       <!-- Height dimension -->
       <line x1="{actual_width + 10}" y1="0" x2="{actual_width + 10}" y2="{actual_height}"/>
-      <line x1="{actual_width + 8}" y1="0" x2="{actual_width + 2}" y2="0"/>
-      <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}"/>
+      <line x1="{actual_width + 8}" y1="0" x2="{actual_width + 2}" y2="0" stroke-width="0.18"/>
+      <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}" stroke-width="0.18"/>
       <polygon points="{actual_width + 10},0 {actual_width + 9},1.0 {actual_width + 11},1.0" fill="blue"/>
       <polygon points="{actual_width + 10},{actual_height} {actual_width + 9},{actual_height-1.0} {actual_width + 11},{actual_height-1.0}" fill="blue"/>
       <text x="{actual_width + 17}" y="{actual_height/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
