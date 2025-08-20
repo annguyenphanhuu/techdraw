@@ -239,8 +239,8 @@ try:
                 # Tính scale factor để fit geometry trong drawing area
                 max_dimension = max(actual_width, actual_height)
 
-                # Dành không gian cho dimensions và text (khoảng 60mm mỗi bên)
-                margin_for_dimensions = 60
+                # Dành không gian cho dimensions và text (giảm xuống 40mm mỗi bên)
+                margin_for_dimensions = 40
                 available_width = drawing_area_width - margin_for_dimensions
                 available_height = drawing_area_height - margin_for_dimensions
 
@@ -255,7 +255,7 @@ try:
                 auto_scale = max(0.15, min(auto_scale, 1.5))
 
                 # Thêm safety factor để đảm bảo không tràn (dimensions + text + spacing)
-                auto_scale *= 0.35  # Giảm thêm để đảm bảo an toàn
+                auto_scale *= 0.45  # Tăng scale factor để views lớn hơn
 
                 # Tính font size cho dimensions (tỷ lệ nghịch với scale)
                 base_font_size = 3.5
@@ -275,10 +275,10 @@ try:
                 front_view_width = actual_height * auto_scale
                 front_view_height = actual_depth * auto_scale
 
-                # Tính margin và reserved areas
-                margin_for_dims = 25      # Margin nhỏ hơn cho dimensions
-                text_height = 12          # Chiều cao text labels
-                dimension_space = 15      # Space nhỏ hơn cho dimension lines
+                # Tính margin và reserved areas - giảm thêm để tận dụng không gian
+                margin_for_dims = 15      # Margin nhỏ hơn nữa cho dimensions
+                text_height = 8           # Chiều cao text labels nhỏ hơn
+                dimension_space = 10      # Space nhỏ hơn nữa cho dimension lines
                 title_block_height = 50   # Reserved space cho title block
 
                 # Tính effective drawing area (tránh title block)
@@ -289,35 +289,35 @@ try:
                 total_views_width = top_view_width + side_view_width + dimension_space * 2
                 total_views_height = top_view_height + front_view_height + dimension_space * 2
 
-                # Tính spacing để distribute evenly trong available space
-                horizontal_spacing = max(15, (effective_width - total_views_width) / 3)
-                vertical_spacing = max(20, (effective_height - total_views_height) / 3)
+                # Tính spacing để distribute evenly trong available space - giảm thêm
+                horizontal_spacing = max(10, (effective_width - total_views_width) / 3)
+                vertical_spacing = max(15, (effective_height - total_views_height) / 3)
 
                 # Đảm bảo spacing không quá lớn (để tránh views quá xa nhau)
-                horizontal_spacing = min(horizontal_spacing, 25)
-                vertical_spacing = min(vertical_spacing, 40)
+                horizontal_spacing = min(horizontal_spacing, 20)
+                vertical_spacing = min(vertical_spacing, 30)
 
-                # Top View: Góc trên trái với margin an toàn
-                top_view_x = drawing_start_x + margin_for_dims + horizontal_spacing
-                top_view_y = drawing_start_y + margin_for_dims + text_height + vertical_spacing
+                # Right Side View: Góc trên trái với margin an toàn (đổi chỗ với Top View)
+                side_view_x = drawing_start_x + margin_for_dims + horizontal_spacing
+                side_view_y = drawing_start_y + margin_for_dims + text_height + vertical_spacing
 
-                # Right Side View: Bên phải Top View với spacing an toàn
-                side_view_x = top_view_x + top_view_width + dimension_space + horizontal_spacing
-                side_view_y = top_view_y  # Cùng baseline với Top View
+                # Front View: Bên phải Right View với spacing an toàn
+                front_view_x = side_view_x + side_view_width + dimension_space + horizontal_spacing
+                front_view_y = side_view_y  # Cùng baseline với Right View
 
-                # Front View: Dưới Top View với spacing an toàn, tránh title block
-                front_view_x = top_view_x  # Alignment với Top View
-                front_view_y = top_view_y + top_view_height + dimension_space + vertical_spacing
+                # Top View: Dưới Right View với spacing an toàn, tránh title block (đổi chỗ với Right View)
+                top_view_x = side_view_x  # Alignment với Right View
+                top_view_y = side_view_y + side_view_height + dimension_space + vertical_spacing
 
-                # Kiểm tra và điều chỉnh nếu Front View quá gần title block
-                max_front_y = drawing_start_y + drawing_area_height - title_block_height - margin_for_dims
-                if front_view_y + front_view_height > max_front_y:
-                    front_view_y = max_front_y - front_view_height - 10  # 10mm buffer
+                # Kiểm tra và điều chỉnh nếu Top View quá gần title block (đổi chỗ với Right View)
+                max_top_y = drawing_start_y + drawing_area_height - title_block_height - margin_for_dims
+                if top_view_y + top_view_height > max_top_y:
+                    top_view_y = max_top_y - top_view_height - 10  # 10mm buffer
 
                 print(f"Auto-scaling: max_dimension={max_dimension:.1f}, scale={auto_scale:.3f}")
-                print(f"Positions: top=({top_view_x:.1f},{top_view_y:.1f}), side=({side_view_x:.1f},{side_view_y:.1f}), front=({front_view_x:.1f},{front_view_y:.1f})")
+                print(f"Positions: side=({side_view_x:.1f},{side_view_y:.1f}), front=({front_view_x:.1f},{front_view_y:.1f}), top=({top_view_x:.1f},{top_view_y:.1f})")
                 print(f"Drawing area: x={drawing_start_x}, y={drawing_start_y}, width={drawing_area_width}, height={drawing_area_height}")
-                print(f"Front View boundaries: x={front_view_x:.1f}, y={front_view_y:.1f} to y={front_view_y + actual_depth * auto_scale:.1f}")
+                print(f"Top View boundaries: x={top_view_x:.1f}, y={top_view_y:.1f} to y={top_view_y + actual_height * auto_scale:.1f}")
             else:
                 # Fallback values với conservative layout
                 auto_scale = 0.5  # Scale nhỏ hơn để an toàn
@@ -330,34 +330,36 @@ try:
                 fallback_height = 50 * auto_scale
                 fallback_depth = 5 * auto_scale
 
-                margin_for_dims = 25
-                text_height = 12
-                dimension_space = 15
+                margin_for_dims = 15
+                text_height = 8
+                dimension_space = 10
                 title_block_height = 50
-                horizontal_spacing = 20
-                vertical_spacing = 25
+                horizontal_spacing = 15
+                vertical_spacing = 20
 
                 top_view_x = drawing_start_x + margin_for_dims + horizontal_spacing
                 top_view_y = drawing_start_y + margin_for_dims + text_height + vertical_spacing
-                side_view_x = top_view_x + fallback_width + dimension_space + horizontal_spacing
-                side_view_y = top_view_y
-                front_view_x = top_view_x
-                front_view_y = min(top_view_y + fallback_height + dimension_space + vertical_spacing,
-                                 drawing_start_y + 190 - title_block_height - margin_for_dims - fallback_depth)
+                side_view_x = drawing_start_x + margin_for_dims + horizontal_spacing
+                side_view_y = drawing_start_y + margin_for_dims + text_height + vertical_spacing
+                front_view_x = side_view_x + fallback_width + dimension_space + horizontal_spacing
+                front_view_y = side_view_y
+                top_view_x = side_view_x
+                top_view_y = min(side_view_y + fallback_depth + dimension_space + vertical_spacing,
+                                 drawing_start_y + 190 - title_block_height - margin_for_dims - fallback_height)
 
             drawing_content = f'''
   <!-- Drawing content -->
   <!-- Center marks for alignment -->
   <g stroke="red" stroke-width="0.2" fill="none" opacity="0.3">
-    <!-- Top view center mark -->
-    <line x1="{top_view_x-5}" y1="{top_view_y}" x2="{top_view_x+5}" y2="{top_view_y}"/>
-    <line x1="{top_view_x}" y1="{top_view_y-5}" x2="{top_view_x}" y2="{top_view_y+5}"/>
-    <!-- Side view center mark -->
+    <!-- Right view center mark -->
     <line x1="{side_view_x-5}" y1="{side_view_y}" x2="{side_view_x+5}" y2="{side_view_y}"/>
     <line x1="{side_view_x}" y1="{side_view_y-5}" x2="{side_view_x}" y2="{side_view_y+5}"/>
     <!-- Front view center mark -->
     <line x1="{front_view_x-5}" y1="{front_view_y}" x2="{front_view_x+5}" y2="{front_view_y}"/>
     <line x1="{front_view_x}" y1="{front_view_y-5}" x2="{front_view_x}" y2="{front_view_y+5}"/>
+    <!-- Top view center mark -->
+    <line x1="{top_view_x-5}" y1="{top_view_y}" x2="{top_view_x+5}" y2="{top_view_y}"/>
+    <line x1="{top_view_x}" y1="{top_view_y-5}" x2="{top_view_x}" y2="{top_view_y+5}"/>
   </g>
 
   <!-- Top view -->
@@ -380,11 +382,11 @@ try:
                                 start = edge.Vertexes[0].Point
                                 end = edge.Vertexes[1].Point
 
-                                # Project lên XY plane và scale (1:1)
-                                x1 = start.x
-                                y1 = -start.y  # Flip Y axis cho SVG
-                                x2 = end.x
-                                y2 = -end.y
+                                # Project lên XY plane - vẽ hình xuống dưới trục tọa độ
+                                x1 = start.x   # X: từ trái sang phải
+                                y1 = start.y   # Y: xuống dưới (y>0 trong SVG)
+                                x2 = end.x     # X: từ trái sang phải
+                                y2 = end.y     # Y: xuống dưới
 
                                 drawing_content += f'    <line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="black" stroke-width="0.7"/>\n'
 
@@ -399,11 +401,11 @@ try:
                                 last_param = edge.LastParameter
                                 angle_span = abs(last_param - first_param)
 
-                                # Project center lên XY plane
-                                cx = center.x
-                                cy = -center.y  # Flip Y axis cho SVG
+                                # Project center lên XY plane - vẽ hình xuống dưới
+                                cx = center.x   # X: từ trái sang phải
+                                cy = center.y   # Y: xuống dưới (y>0 trong SVG)
 
-                                if angle_span >= 6.0:  # Gần 2π (full circle)
+                                if angle_span >= 6.28:  # 2π (full circle) - chính xác hơn
                                     # Đây là lỗ tròn hoàn chỉnh
                                     drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
                                     print(f"  Full Circle (hole): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}")
@@ -414,47 +416,53 @@ try:
                                         start_point = edge.Vertexes[0].Point
                                         end_point = edge.Vertexes[1].Point
 
-                                        # Project lên XY plane và flip Y
-                                        start_x = start_point.x
-                                        start_y = -start_point.y
-                                        end_x = end_point.x
-                                        end_y = -end_point.y
+                                        # Project lên XY plane - vẽ hình xuống dưới
+                                        start_x = start_point.x   # X: từ trái sang phải
+                                        start_y = start_point.y   # Y: xuống dưới
+                                        end_x = end_point.x       # X: từ trái sang phải
+                                        end_y = end_point.y       # Y: xuống dưới
 
                                         # Tính sweep direction dựa trên geometry thực tế
-                                        # Vector từ center đến start point (sử dụng simple calculation)
+                                        # Vector từ center đến start point trong coordinate system mới
                                         start_vec_x = start_point.x - center.x
                                         start_vec_y = start_point.y - center.y
                                         end_vec_x = end_point.x - center.x
                                         end_vec_y = end_point.y - center.y
 
-                                        # Cross product để xác định direction (clockwise hay counterclockwise)
+                                        # Cross product để xác định direction
+                                        # Vì Y axis không flip nữa, cần điều chỉnh logic
                                         cross_z = start_vec_x * end_vec_y - start_vec_y * end_vec_x
-                                        sweep_flag = 0 if cross_z > 0 else 1  # 0 = counterclockwise, 1 = clockwise
+                                        sweep_flag = 1 if cross_z > 0 else 0  # Đảo ngược logic cho coordinate system mới
 
                                         # Large arc flag
                                         large_arc = 1 if angle_span > math.pi else 0
 
                                         drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
-                                        print(f"  Arc (fillet): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}, angle={math.degrees(angle_span):.1f}°")
+                                        print(f"  Arc (fillet): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}, angle={math.degrees(angle_span):.1f}°, sweep={sweep_flag}, large={large_arc}")
+                                        print(f"    Start: ({start_x:.2f},{start_y:.2f}), End: ({end_x:.2f},{end_y:.2f})")
                                     else:
                                         # Fallback: sử dụng parameter-based calculation
                                         start_angle = first_param
                                         end_angle = last_param
 
                                         start_x = cx + radius * math.cos(start_angle)
-                                        start_y = cy - radius * math.sin(start_angle)  # Flip Y trong calculation
+                                        start_y = cy + radius * math.sin(start_angle)  # Y: xuống dưới
                                         end_x = cx + radius * math.cos(end_angle)
-                                        end_y = cy - radius * math.sin(end_angle)
+                                        end_y = cy + radius * math.sin(end_angle)
 
                                         large_arc = 1 if angle_span > math.pi else 0
-                                        sweep_flag = 1  # Default clockwise
+                                        # Tính sweep direction cho fallback case
+                                        if end_angle > start_angle:
+                                            sweep_flag = 1  # Clockwise
+                                        else:
+                                            sweep_flag = 0  # Counterclockwise
 
                                         drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
                                         print(f"  Arc (fillet fallback): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}, angle={math.degrees(angle_span):.1f}°")
                             else:
-                                # Fallback: vẽ như circle
-                                cx = center.x
-                                cy = -center.y
+                                # Fallback: vẽ như circle - hình xuống dưới
+                                cx = center.x   # X: từ trái sang phải
+                                cy = center.y   # Y: xuống dưới
                                 drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
                                 print(f"  Circle (fallback): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}")
 
@@ -465,8 +473,8 @@ try:
                                 points = edge.discretize(20)  # 20 điểm
                                 path_data = ""
                                 for j, point in enumerate(points):
-                                    x = point.x
-                                    y = -point.y  # Flip Y axis
+                                    x = point.x   # X: từ trái sang phải
+                                    y = point.y   # Y: xuống dưới
                                     if j == 0:
                                         path_data += f"M {x:.2f},{y:.2f}"
                                     else:
@@ -484,8 +492,8 @@ try:
                                 major_radius = curve.MajorRadius
                                 minor_radius = curve.MinorRadius
 
-                                cx = center.x
-                                cy = -center.y  # Flip Y axis
+                                cx = center.x   # X: từ trái sang phải
+                                cy = center.y   # Y: xuống dưới
 
                                 drawing_content += f'    <ellipse cx="{cx:.2f}" cy="{cy:.2f}" rx="{major_radius:.2f}" ry="{minor_radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
                                 print(f"  Ellipse: center=({cx:.2f},{cy:.2f}), rx={major_radius:.2f}, ry={minor_radius:.2f}")
@@ -499,8 +507,8 @@ try:
                                 if len(points) >= 2:
                                     path_data = ""
                                     for j, point in enumerate(points):
-                                        x = point.x
-                                        y = -point.y
+                                        x = point.x   # X: từ trái sang phải
+                                        y = point.y   # Y: xuống dưới
                                         if j == 0:
                                             path_data += f"M {x:.2f},{y:.2f}"
                                         else:
@@ -514,13 +522,13 @@ try:
                     except Exception as e:
                         print(f"Lỗi xử lý edge {i}: {e}")
             else:
-                # Fallback: vẽ hình chữ nhật dựa trên bbox
+                # Fallback: vẽ hình chữ nhật - hình xuống dưới
                 if bbox:
                     fallback_width = bbox.XMax - bbox.XMin
                     fallback_height = bbox.YMax - bbox.YMin
-                    drawing_content += f'    <rect x="0" y="-{fallback_height}" width="{fallback_width}" height="{fallback_height}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                    drawing_content += f'    <rect x="0" y="0" width="{fallback_width}" height="{fallback_height}" fill="none" stroke="black" stroke-width="0.7"/>\n'
                 else:
-                    drawing_content += '    <rect x="0" y="-50" width="50" height="50" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                    drawing_content += '    <rect x="0" y="0" width="50" height="50" fill="none" stroke="black" stroke-width="0.7"/>\n'
 
             # Tạo dimensions tự động dựa trên geometry thực tế
             if bbox:
@@ -540,43 +548,43 @@ try:
                                     last_param = edge.LastParameter
                                     angle_span = abs(last_param - first_param)
 
-                                    if angle_span >= 6.0:  # Gần 2π (full circle) - đây là lỗ thực sự
+                                    if angle_span >= 6.28:  # 2π (full circle) - đây là lỗ thực sự
                                         center = curve.Center
                                         radius = curve.Radius
-                                        hole_centers.append((center.x, -center.y))  # Y flip
+                                        hole_centers.append((center.x, center.y))  # Hình xuống dưới
                                         hole_radii.append(radius)
                         except:
                             pass
 
                 drawing_content += f'''
-    <!-- Dimensions for Top View (Auto-generated) -->
+    <!-- Dimensions for Top View (Auto-generated) - hình vẽ xuống dưới -->
     <g stroke="blue" stroke-width="0.35" fill="none">
       <!-- Width dimension -->
-      <line x1="0" y1="10" x2="{actual_width}" y2="10"/>
-      <line x1="0" y1="2" x2="0" y2="8"/>
-      <line x1="{actual_width}" y1="2" x2="{actual_width}" y2="8"/>
-      <polygon points="0,10 1.0,9 1.0,11" fill="blue"/>
-      <polygon points="{actual_width},10 {actual_width-1.0},9 {actual_width-1.0},11" fill="blue"/>
-      <text x="{actual_width/2}" y="17" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
+      <line x1="0" y1="-10" x2="{actual_width}" y2="-10"/>
+      <line x1="0" y1="-8" x2="0" y2="-2"/>
+      <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2"/>
+      <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
+      <polygon points="{actual_width},-10 {actual_width-1.0},-9 {actual_width-1.0},-11" fill="blue"/>
+      <text x="{actual_width/2}" y="-17" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
 
       <!-- Height dimension -->
-      <line x1="-10" y1="0" x2="-10" y2="-{actual_height}"/>
-      <line x1="-8" y1="0" x2="-2" y2="0"/>
-      <line x1="-8" y1="-{actual_height}" x2="-2" y2="-{actual_height}"/>
-      <polygon points="-10,0 -9,-1.0 -11,-1.0" fill="blue"/>
-      <polygon points="-10,-{actual_height} -9,-{actual_height-1.0} -11,-{actual_height-1.0}" fill="blue"/>
-      <text x="-17" y="-{actual_height/2}" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,-17,-{actual_height/2})">{actual_height:.0f}</text>'''
+      <line x1="{actual_width + 10}" y1="0" x2="{actual_width + 10}" y2="{actual_height}"/>
+      <line x1="{actual_width + 8}" y1="0" x2="{actual_width + 2}" y2="0"/>
+      <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}"/>
+      <polygon points="{actual_width + 10},0 {actual_width + 9},1.0 {actual_width + 11},1.0" fill="blue"/>
+      <polygon points="{actual_width + 10},{actual_height} {actual_width + 9},{actual_height-1.0} {actual_width + 11},{actual_height-1.0}" fill="blue"/>
+      <text x="{actual_width + 17}" y="{actual_height/2}" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
 
-                # Thêm dimensions cho lỗ (nếu có)
+                # Thêm dimensions cho lỗ (nếu có) - hình vẽ xuống dưới
                 if hole_centers and hole_radii:
                     for i, ((hx, hy), hr) in enumerate(zip(hole_centers, hole_radii)):
                         drawing_content += f'''
       <!-- Hole {i+1} diameter dimension -->
-      <line x1="{hx + hr*0.7}" y1="{hy - hr*0.7}" x2="{hx + hr*0.7 + 10}" y2="{hy - hr*0.7 - 10}"/>
-      <polygon points="{hx + hr*0.7 + 10},{hy - hr*0.7 - 10} {hx + hr*0.7 + 9.0},{hy - hr*0.7 - 9.5} {hx + hr*0.7 + 9.0},{hy - hr*0.7 - 10.5}" fill="blue"/>
-      <text x="{hx + hr*0.7 + 13}" y="{hy - hr*0.7 - 7}" font-family="osifont" font-size="{dimension_font_size*0.85:.1f}">Ø{hr*2:.0f}</text>'''
+      <line x1="{hx + hr*0.7}" y1="{hy + hr*0.7}" x2="{hx + hr*0.7 + 10}" y2="{hy + hr*0.7 + 10}"/>
+      <polygon points="{hx + hr*0.7 + 10},{hy + hr*0.7 + 10} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 9.5} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 10.5}" fill="blue"/>
+      <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="osifont" font-size="{dimension_font_size*0.85:.1f}">Ø{hr*2:.0f}</text>'''
 
-                # Thêm center lines cho lỗ
+                # Thêm center lines cho lỗ - hình vẽ xuống dưới
                 if hole_centers:
                     drawing_content += '''
       <!-- Center lines for holes -->
@@ -613,33 +621,37 @@ try:
             if bbox:
                 side_width = actual_width
                 side_height = actual_depth
+                # Vẽ trên trục tọa độ (y âm vì SVG Y axis flipped)
+                side_y_offset = -side_height
                 drawing_content += f'''
-    <rect x="0" y="0" width="{side_width}" height="{side_height}" fill="none" stroke="black" stroke-width="0.7"/>'''
+    <rect x="0" y="{side_y_offset}" width="{side_width}" height="{side_height}" fill="none" stroke="black" stroke-width="0.7"/>'''
 
                 # Thêm lỗ như hidden lines (nếu có)
                 if hole_centers and hole_radii:
                     for (hx, hy), hr in zip(hole_centers, hole_radii):
                         drawing_content += f'''
-    <line x1="{hx-hr}" y1="0" x2="{hx+hr}" y2="0" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>
-    <line x1="{hx-hr}" y1="{side_height}" x2="{hx+hr}" y2="{side_height}" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>'''
+    <line x1="{hx-hr}" y1="{side_y_offset}" x2="{hx+hr}" y2="{side_y_offset}" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>
+    <line x1="{hx-hr}" y1="0" x2="{hx+hr}" y2="0" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>'''
 
                 # Thickness dimension
                 drawing_content += f'''
     <!-- Thickness dimension -->
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <line x1="{side_width + 5}" y1="0" x2="{side_width + 5}" y2="{side_height}"/>
+      <line x1="{side_width + 5}" y1="{side_y_offset}" x2="{side_width + 5}" y2="0"/>
+      <line x1="{side_width + 3}" y1="{side_y_offset}" x2="{side_width + 7}" y2="{side_y_offset}"/>
       <line x1="{side_width + 3}" y1="0" x2="{side_width + 7}" y2="0"/>
-      <line x1="{side_width + 3}" y1="{side_height}" x2="{side_width + 7}" y2="{side_height}"/>
-      <polygon points="{side_width + 5},0 {side_width + 4.5},1.0 {side_width + 5.5},1.0" fill="blue"/>
-      <polygon points="{side_width + 5},{side_height} {side_width + 4.5},{side_height-1.0} {side_width + 5.5},{side_height-1.0}" fill="blue"/>
-      <text x="{side_width + 12}" y="{side_height/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_height/2})">{side_height:.0f}</text>
+      <polygon points="{side_width + 5},{side_y_offset} {side_width + 4.5},{side_y_offset + 1.0} {side_width + 5.5},{side_y_offset + 1.0}" fill="blue"/>
+      <polygon points="{side_width + 5},0 {side_width + 4.5},-1.0 {side_width + 5.5},-1.0" fill="blue"/>
+      <text x="{side_width + 12}" y="{side_y_offset/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_y_offset/2})">{side_height:.0f}</text>
     </g>'''
             else:
-                # Fallback
-                drawing_content += '''
-    <rect x="0" y="0" width="50" height="3" fill="none" stroke="black" stroke-width="0.7"/>
+                # Fallback - vẽ trên trục tọa độ
+                fallback_side_height = 3
+                fallback_y_offset = -fallback_side_height
+                drawing_content += f'''
+    <rect x="0" y="{fallback_y_offset}" width="50" height="{fallback_side_height}" fill="none" stroke="black" stroke-width="0.7"/>
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <text x="37" y="1.5" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,37,1.5)">3</text>
+      <text x="37" y="{fallback_y_offset/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,37,{fallback_y_offset/2})">3</text>
     </g>'''
 
             # Sử dụng string formatting để đảm bảo variables được thay thế đúng
@@ -651,39 +663,41 @@ try:
   <g id="front_view" transform="{front_view_transform}">
     <text x="0" y="-8" font-family="osifont" font-size="3.5" text-anchor="middle">Front View</text>'''
 
-            # Tự động tạo Front View dựa trên geometry
+            # Tự động tạo Front View dựa trên geometry - vẽ hướng lên
             if bbox:
                 front_width = actual_height  # Xoay 90 độ so với top view
                 front_height = actual_depth
+                # Vẽ hướng lên (y âm)
                 drawing_content += f'''
-    <rect x="0" y="0" width="{front_width}" height="{front_height}" fill="none" stroke="black" stroke-width="0.7"/>'''
+    <rect x="0" y="-{front_height}" width="{front_width}" height="{front_height}" fill="none" stroke="black" stroke-width="0.7"/>'''
 
                 # Thêm lỗ như hidden lines (nếu có)
                 if hole_centers and hole_radii:
                     for (hx, hy), hr in zip(hole_centers, hole_radii):
                         # Trong front view, lỗ xuất hiện tại vị trí Y của top view
-                        hole_y_in_front = abs(hy)  # Convert back from flipped Y
+                        hole_y_in_front = hy  # Sử dụng Y coordinate từ top view
                         drawing_content += f'''
-    <line x1="{hole_y_in_front-hr}" y1="0" x2="{hole_y_in_front+hr}" y2="0" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>
-    <line x1="{hole_y_in_front-hr}" y1="{front_height}" x2="{hole_y_in_front+hr}" y2="{front_height}" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>'''
+    <line x1="{hole_y_in_front-hr}" y1="-{front_height}" x2="{hole_y_in_front+hr}" y2="-{front_height}" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>
+    <line x1="{hole_y_in_front-hr}" y1="0" x2="{hole_y_in_front+hr}" y2="0" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>'''
 
                 # Width dimension cho front view
                 drawing_content += f'''
     <!-- Width dimension -->
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <line x1="0" y1="-5" x2="{front_width}" y2="-5"/>
-      <line x1="0" y1="-3" x2="0" y2="1"/>
-      <line x1="{front_width}" y1="-3" x2="{front_width}" y2="1"/>
-      <polygon points="0,-5 1.0,-4 1.0,-6" fill="blue"/>
-      <polygon points="{front_width},-5 {front_width-1.0},-4 {front_width-1.0},-6" fill="blue"/>
-      <text x="{front_width/2}" y="-10" font-family="osifont" font-size="3.5" text-anchor="middle">{front_width:.0f}</text>
+      <line x1="0" y1="5" x2="{front_width}" y2="5"/>
+      <line x1="0" y1="3" x2="0" y2="-1"/>
+      <line x1="{front_width}" y1="3" x2="{front_width}" y2="-1"/>
+      <polygon points="0,5 1.0,4 1.0,6" fill="blue"/>
+      <polygon points="{front_width},5 {front_width-1.0},4 {front_width-1.0},6" fill="blue"/>
+      <text x="{front_width/2}" y="10" font-family="osifont" font-size="3.5" text-anchor="middle">{front_width:.0f}</text>
     </g>'''
             else:
-                # Fallback
-                drawing_content += '''
-    <rect x="0" y="0" width="50" height="3" fill="none" stroke="black" stroke-width="0.7"/>
+                # Fallback - vẽ hướng lên
+                fallback_front_height = 3
+                drawing_content += f'''
+    <rect x="0" y="-{fallback_front_height}" width="50" height="{fallback_front_height}" fill="none" stroke="black" stroke-width="0.7"/>
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <text x="25" y="-10" font-family="osifont" font-size="3.5" text-anchor="middle">50</text>
+      <text x="25" y="10" font-family="osifont" font-size="3.5" text-anchor="middle">50</text>
     </g>'''
 
             drawing_content += f'''
