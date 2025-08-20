@@ -257,10 +257,10 @@ try:
                 # Thêm safety factor để đảm bảo không tràn (dimensions + text + spacing)
                 auto_scale *= 0.45  # Tăng scale factor để views lớn hơn
 
-                # Tính font size cho dimensions (tỷ lệ nghịch với scale)
-                base_font_size = 3.5
+                # Tính font size cho dimensions (thống nhất cho tất cả số)
+                base_font_size = 5.0  # Kích thước font chuẩn cho tất cả dimension
                 dimension_font_size = base_font_size / auto_scale
-                dimension_font_size = max(2.5, min(dimension_font_size, 6.0))  # Giới hạn font size
+                dimension_font_size = max(4.5, min(dimension_font_size, 8.0))  # Giới hạn hợp lý
 
                 # Tính vị trí dựa trên drawing area thực tế
                 # Drawing area: x=20, y=10, width=267, height=190 (từ template)
@@ -321,7 +321,7 @@ try:
             else:
                 # Fallback values với conservative layout
                 auto_scale = 0.5  # Scale nhỏ hơn để an toàn
-                dimension_font_size = 3.5
+                dimension_font_size = 5.0  # Kích thước font thống nhất
                 drawing_start_x = 20
                 drawing_start_y = 10
 
@@ -578,7 +578,7 @@ try:
       <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="{actual_width},-10 {actual_width-1.0},-9 {actual_width-1.0},-11" fill="blue"/>
-      <text x="{actual_width/2}" y="-17" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle">{actual_width:.0f}</text>
+      <text x="{actual_width/2}" y="-17" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
 
       <!-- Height dimension -->
       <line x1="{actual_width + 10}" y1="0" x2="{actual_width + 10}" y2="{actual_height}"/>
@@ -586,7 +586,7 @@ try:
       <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}"/>
       <polygon points="{actual_width + 10},0 {actual_width + 9},1.0 {actual_width + 11},1.0" fill="blue"/>
       <polygon points="{actual_width + 10},{actual_height} {actual_width + 9},{actual_height-1.0} {actual_width + 11},{actual_height-1.0}" fill="blue"/>
-      <text x="{actual_width + 17}" y="{actual_height/2}" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
+      <text x="{actual_width + 17}" y="{actual_height/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
 
                 # Thêm dimensions cho lỗ (nếu có) - hình vẽ xuống dưới
                 if hole_centers and hole_radii:
@@ -595,7 +595,7 @@ try:
       <!-- Hole {i+1} diameter dimension -->
       <line x1="{hx + hr*0.7}" y1="{hy + hr*0.7}" x2="{hx + hr*0.7 + 10}" y2="{hy + hr*0.7 + 10}"/>
       <polygon points="{hx + hr*0.7 + 10},{hy + hr*0.7 + 10} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 9.5} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 10.5}" fill="blue"/>
-      <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="Arial, sans-serif" font-size="2.1">Ø{hr*2:.0f}</text>'''
+      <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}">Ø{hr*2:.0f}</text>'''
 
                 # Thêm dimensions cho bán kính bo góc (chỉ hiển thị 1 lần cho mỗi bán kính duy nhất)
                 if unique_fillet_radii and fillet_centers and fillet_radii:
@@ -641,7 +641,7 @@ try:
       <!-- Fillet radius dimension R{unique_radius:.0f} -->
       <line x1="{dim_x}" y1="{dim_y}" x2="{fx}" y2="{fy}" stroke="blue" stroke-width="0.25"/>
       <polygon points="{arrow_tip_x},{arrow_tip_y} {arrow_wing1_x},{arrow_wing1_y} {arrow_wing2_x},{arrow_wing2_y}" fill="blue"/>
-      <text x="{dim_x + 2}" y="{dim_y - 1}" font-family="Arial, sans-serif" font-size="2.1">R{unique_radius:.0f}</text>'''
+      <text x="{dim_x + 2}" y="{dim_y - 1}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}">R{unique_radius:.0f}</text>'''
                                 print(f"Added radius dimension R{unique_radius:.0f} at fillet center ({fx:.1f},{fy:.1f})")
                                 break  # Chỉ vẽ dimension cho bo góc đầu tiên có bán kính này
 
@@ -703,7 +703,7 @@ try:
       <line x1="{side_width + 3}" y1="0" x2="{side_width + 7}" y2="0"/>
       <polygon points="{side_width + 5},{side_y_offset} {side_width + 4.5},{side_y_offset + 1.0} {side_width + 5.5},{side_y_offset + 1.0}" fill="blue"/>
       <polygon points="{side_width + 5},0 {side_width + 4.5},-1.0 {side_width + 5.5},-1.0" fill="blue"/>
-      <text x="{side_width + 12}" y="{side_y_offset/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_y_offset/2})">{side_height:.0f}</text>
+      <text x="{side_width + 12}" y="{side_y_offset/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_y_offset/2})">{side_height:.0f}</text>
     </g>'''
             else:
                 # Fallback - vẽ trên trục tọa độ
@@ -712,7 +712,7 @@ try:
                 drawing_content += f'''
     <rect x="0" y="{fallback_y_offset}" width="50" height="{fallback_side_height}" fill="none" stroke="black" stroke-width="0.7"/>
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <text x="37" y="{fallback_y_offset/2}" font-family="osifont" font-size="3.5" text-anchor="middle" transform="rotate(-90,37,{fallback_y_offset/2})">3</text>
+      <text x="37" y="{fallback_y_offset/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,37,{fallback_y_offset/2})">3</text>
     </g>'''
 
             # Sử dụng string formatting để đảm bảo variables được thay thế đúng
@@ -749,7 +749,7 @@ try:
       <line x1="{front_width}" y1="3" x2="{front_width}" y2="-1"/>
       <polygon points="0,5 1.0,4 1.0,6" fill="blue"/>
       <polygon points="{front_width},5 {front_width-1.0},4 {front_width-1.0},6" fill="blue"/>
-      <text x="{front_width/2}" y="10" font-family="osifont" font-size="3.5" text-anchor="middle">{front_width:.0f}</text>
+      <text x="{front_width/2}" y="10" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">{front_width:.0f}</text>
     </g>'''
             else:
                 # Fallback - vẽ hướng lên
@@ -757,7 +757,7 @@ try:
                 drawing_content += f'''
     <rect x="0" y="-{fallback_front_height}" width="50" height="{fallback_front_height}" fill="none" stroke="black" stroke-width="0.7"/>
     <g stroke="blue" stroke-width="0.35" fill="none">
-      <text x="25" y="10" font-family="osifont" font-size="3.5" text-anchor="middle">50</text>
+      <text x="25" y="10" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">50</text>
     </g>'''
 
             drawing_content += f'''
