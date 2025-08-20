@@ -1006,25 +1006,24 @@
 
   <!-- Top view -->
   <g id="top_view" transform="translate(45,79.46075) scale(0.51075)">
-    <text x="0" y="-15" font-family="osifont" font-size="3.5" text-anchor="middle">Top View</text>
-    <line x1="-0.00" y1="5.00" x2="-0.00" y2="95.00" stroke="black" stroke-width="0.7"/>
-    <path d="M -0.00,5.00 A 5.00,5.00 0 0,1 5.00,-0.00" fill="none" stroke="black" stroke-width="0.7"/>
-    <line x1="5.00" y1="-0.00" x2="195.00" y2="-0.00" stroke="black" stroke-width="0.7"/>
-    <path d="M 200.00,5.00 A 5.00,5.00 0 0,0 195.00,-0.00" fill="none" stroke="black" stroke-width="0.7"/>
-    <line x1="200.00" y1="5.00" x2="200.00" y2="95.00" stroke="black" stroke-width="0.7"/>
-    <path d="M 200.00,95.00 A 5.00,5.00 0 0,1 195.00,100.00" fill="none" stroke="black" stroke-width="0.7"/>
-    <line x1="5.00" y1="100.00" x2="195.00" y2="100.00" stroke="black" stroke-width="0.7"/>
-    <path d="M -0.00,95.00 A 5.00,5.00 0 0,0 5.00,100.00" fill="none" stroke="black" stroke-width="0.7"/>
+    <line x1="-0.00" y1="5.00" x2="-0.00" y2="95.00" stroke="black" stroke-width="0.5"/>
+    <path d="M -0.00,5.00 A 5.00,5.00 0 0,1 5.00,-0.00" fill="none" stroke="black" stroke-width="0.5"/>
+    <line x1="5.00" y1="-0.00" x2="195.00" y2="-0.00" stroke="black" stroke-width="0.5"/>
+    <path d="M 200.00,5.00 A 5.00,5.00 0 0,0 195.00,-0.00" fill="none" stroke="black" stroke-width="0.5"/>
+    <line x1="200.00" y1="5.00" x2="200.00" y2="95.00" stroke="black" stroke-width="0.5"/>
+    <path d="M 200.00,95.00 A 5.00,5.00 0 0,1 195.00,100.00" fill="none" stroke="black" stroke-width="0.5"/>
+    <line x1="5.00" y1="100.00" x2="195.00" y2="100.00" stroke="black" stroke-width="0.5"/>
+    <path d="M -0.00,95.00 A 5.00,5.00 0 0,0 5.00,100.00" fill="none" stroke="black" stroke-width="0.5"/>
 
     <!-- Dimensions for Top View (Auto-generated) - hình vẽ xuống dưới -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="0.25" fill="none">
       <!-- Width dimension -->
       <line x1="0" y1="-10" x2="200.0" y2="-10"/>
       <line x1="0" y1="-8" x2="0" y2="-2"/>
       <line x1="200.0" y1="-8" x2="200.0" y2="-2"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="200.0,-10 199.0,-9 199.0,-11" fill="blue"/>
-      <text x="100.0" y="-17" font-family="osifont" font-size="6.0" text-anchor="middle">200</text>
+      <text x="100.0" y="-17" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle">200</text>
 
       <!-- Height dimension -->
       <line x1="210.0" y1="0" x2="210.0" y2="100.0"/>
@@ -1032,12 +1031,11 @@
       <line x1="208.0" y1="100.0" x2="202.0" y2="100.0"/>
       <polygon points="210.0,0 209.0,1.0 211.0,1.0" fill="blue"/>
       <polygon points="210.0,100.0 209.0,99.0 211.0,99.0" fill="blue"/>
-      <text x="217.0" y="50.0" font-family="osifont" font-size="6.0" text-anchor="middle" transform="rotate(-90,217.0,50.0)">100</text>
+      <text x="217.0" y="50.0" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle" transform="rotate(-90,217.0,50.0)">100</text>
     </g>
   </g>
   <!-- Right side view showing thickness -->
   <g id="side_view" transform="translate(45,50.46425000000001) scale(0.51075)">
-    <text x="0" y="-8" font-family="osifont" font-size="3.5" text-anchor="middle">Right Side View</text>
     <rect x="0" y="-3.0" width="200.0" height="3.0" fill="none" stroke="black" stroke-width="0.7"/>
     <!-- Thickness dimension -->
     <g stroke="blue" stroke-width="0.35" fill="none">
@@ -1052,7 +1050,6 @@
 
   <!-- Front view -->
   <g id="front_view" transform="translate(167.15,50.46425000000001) scale(0.51075)">
-    <text x="0" y="-8" font-family="osifont" font-size="3.5" text-anchor="middle">Front View</text>
     <rect x="0" y="-3.0" width="100.0" height="3.0" fill="none" stroke="black" stroke-width="0.7"/>
     <!-- Width dimension -->
     <g stroke="blue" stroke-width="0.35" fill="none">

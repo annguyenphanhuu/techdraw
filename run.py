@@ -364,7 +364,6 @@ try:
 
   <!-- Top view -->
   <g id="top_view" transform="translate({top_view_x},{top_view_y}) scale({auto_scale})">
-    <text x="0" y="-15" font-family="osifont" font-size="3.5" text-anchor="middle">Top View</text>
 '''
 
             # Vẽ geometry vào drawing content
@@ -388,7 +387,7 @@ try:
                                 x2 = end.x     # X: từ trái sang phải
                                 y2 = end.y     # Y: xuống dưới
 
-                                drawing_content += f'    <line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="black" stroke-width="0.7"/>\n'
+                                drawing_content += f'    <line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="black" stroke-width="0.5"/>\n'
 
                         elif curve_type == "Circle":
                             # Kiểm tra xem đây là circle hoàn chỉnh hay chỉ là arc (bo góc)
@@ -407,7 +406,7 @@ try:
 
                                 if angle_span >= 6.28:  # 2π (full circle) - chính xác hơn
                                     # Đây là lỗ tròn hoàn chỉnh
-                                    drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                    drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                     print(f"  Full Circle (hole): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}")
                                 else:
                                     # Đây là arc (bo góc) - sử dụng actual vertex positions
@@ -437,7 +436,7 @@ try:
                                         # Large arc flag
                                         large_arc = 1 if angle_span > math.pi else 0
 
-                                        drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                        drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                         print(f"  Arc (fillet): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}, angle={math.degrees(angle_span):.1f}°, sweep={sweep_flag}, large={large_arc}")
                                         print(f"    Start: ({start_x:.2f},{start_y:.2f}), End: ({end_x:.2f},{end_y:.2f})")
                                     else:
@@ -457,13 +456,13 @@ try:
                                         else:
                                             sweep_flag = 0  # Counterclockwise
 
-                                        drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                        drawing_content += f'    <path d="M {start_x:.2f},{start_y:.2f} A {radius:.2f},{radius:.2f} 0 {large_arc},{sweep_flag} {end_x:.2f},{end_y:.2f}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                         print(f"  Arc (fillet fallback): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}, angle={math.degrees(angle_span):.1f}°")
                             else:
                                 # Fallback: vẽ như circle - hình xuống dưới
                                 cx = center.x   # X: từ trái sang phải
                                 cy = center.y   # Y: xuống dưới
-                                drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                drawing_content += f'    <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                 print(f"  Circle (fallback): center=({cx:.2f},{cy:.2f}), radius={radius:.2f}")
 
                         elif curve_type in ["BSplineCurve", "BezierCurve"]:
@@ -480,7 +479,7 @@ try:
                                     else:
                                         path_data += f" L {x:.2f},{y:.2f}"
 
-                                drawing_content += f'    <path d="{path_data}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                drawing_content += f'    <path d="{path_data}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                 print(f"  Curve discretized with {len(points)} points")
                             except:
                                 print(f"  Failed to discretize curve")
@@ -495,7 +494,7 @@ try:
                                 cx = center.x   # X: từ trái sang phải
                                 cy = center.y   # Y: xuống dưới
 
-                                drawing_content += f'    <ellipse cx="{cx:.2f}" cy="{cy:.2f}" rx="{major_radius:.2f}" ry="{minor_radius:.2f}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                drawing_content += f'    <ellipse cx="{cx:.2f}" cy="{cy:.2f}" rx="{major_radius:.2f}" ry="{minor_radius:.2f}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                 print(f"  Ellipse: center=({cx:.2f},{cy:.2f}), rx={major_radius:.2f}, ry={minor_radius:.2f}")
                             except:
                                 print(f"  Failed to process ellipse")
@@ -514,7 +513,7 @@ try:
                                         else:
                                             path_data += f" L {x:.2f},{y:.2f}"
 
-                                    drawing_content += f'    <path d="{path_data}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                                    drawing_content += f'    <path d="{path_data}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                                     print(f"  Unknown curve type discretized with {len(points)} points")
                             except Exception as e2:
                                 print(f"  Failed to process unknown curve: {e2}")
@@ -526,9 +525,9 @@ try:
                 if bbox:
                     fallback_width = bbox.XMax - bbox.XMin
                     fallback_height = bbox.YMax - bbox.YMin
-                    drawing_content += f'    <rect x="0" y="0" width="{fallback_width}" height="{fallback_height}" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                    drawing_content += f'    <rect x="0" y="0" width="{fallback_width}" height="{fallback_height}" fill="none" stroke="black" stroke-width="0.5"/>\n'
                 else:
-                    drawing_content += '    <rect x="0" y="0" width="50" height="50" fill="none" stroke="black" stroke-width="0.7"/>\n'
+                    drawing_content += '    <rect x="0" y="0" width="50" height="50" fill="none" stroke="black" stroke-width="0.5"/>\n'
 
             # Tạo dimensions tự động dựa trên geometry thực tế
             if bbox:
@@ -558,14 +557,14 @@ try:
 
                 drawing_content += f'''
     <!-- Dimensions for Top View (Auto-generated) - hình vẽ xuống dưới -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="0.25" fill="none">
       <!-- Width dimension -->
       <line x1="0" y1="-10" x2="{actual_width}" y2="-10"/>
       <line x1="0" y1="-8" x2="0" y2="-2"/>
       <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="{actual_width},-10 {actual_width-1.0},-9 {actual_width-1.0},-11" fill="blue"/>
-      <text x="{actual_width/2}" y="-17" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
+      <text x="{actual_width/2}" y="-17" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle">{actual_width:.0f}</text>
 
       <!-- Height dimension -->
       <line x1="{actual_width + 10}" y1="0" x2="{actual_width + 10}" y2="{actual_height}"/>
@@ -573,7 +572,7 @@ try:
       <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}"/>
       <polygon points="{actual_width + 10},0 {actual_width + 9},1.0 {actual_width + 11},1.0" fill="blue"/>
       <polygon points="{actual_width + 10},{actual_height} {actual_width + 9},{actual_height-1.0} {actual_width + 11},{actual_height-1.0}" fill="blue"/>
-      <text x="{actual_width + 17}" y="{actual_height/2}" font-family="osifont" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
+      <text x="{actual_width + 17}" y="{actual_height/2}" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
 
                 # Thêm dimensions cho lỗ (nếu có) - hình vẽ xuống dưới
                 if hole_centers and hole_radii:
@@ -582,7 +581,7 @@ try:
       <!-- Hole {i+1} diameter dimension -->
       <line x1="{hx + hr*0.7}" y1="{hy + hr*0.7}" x2="{hx + hr*0.7 + 10}" y2="{hy + hr*0.7 + 10}"/>
       <polygon points="{hx + hr*0.7 + 10},{hy + hr*0.7 + 10} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 9.5} {hx + hr*0.7 + 9.0},{hy + hr*0.7 + 10.5}" fill="blue"/>
-      <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="osifont" font-size="{dimension_font_size*0.85:.1f}">Ø{hr*2:.0f}</text>'''
+      <text x="{hx + hr*0.7 + 13}" y="{hy + hr*0.7 + 7}" font-family="Arial, sans-serif" font-size="2.1">Ø{hr*2:.0f}</text>'''
 
                 # Thêm center lines cho lỗ - hình vẽ xuống dưới
                 if hole_centers:
@@ -614,8 +613,7 @@ try:
             # Thêm Right Side View
             drawing_content += f'''
   <!-- Right side view showing thickness -->
-  <g id="side_view" transform="translate({side_view_x},{side_view_y}) scale({auto_scale})">
-    <text x="0" y="-8" font-family="osifont" font-size="3.5" text-anchor="middle">Right Side View</text>'''
+  <g id="side_view" transform="translate({side_view_x},{side_view_y}) scale({auto_scale})">'''
 
             # Tự động tạo Right Side View dựa trên geometry
             if bbox:
@@ -630,8 +628,8 @@ try:
                 if hole_centers and hole_radii:
                     for (hx, hy), hr in zip(hole_centers, hole_radii):
                         drawing_content += f'''
-    <line x1="{hx-hr}" y1="{side_y_offset}" x2="{hx+hr}" y2="{side_y_offset}" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>
-    <line x1="{hx-hr}" y1="0" x2="{hx+hr}" y2="0" stroke="gray" stroke-width="0.35" stroke-dasharray="3,1"/>'''
+    <line x1="{hx-hr}" y1="{side_y_offset}" x2="{hx+hr}" y2="{side_y_offset}" stroke="gray" stroke-width="0.25" stroke-dasharray="3,1"/>
+    <line x1="{hx-hr}" y1="0" x2="{hx+hr}" y2="0" stroke="gray" stroke-width="0.25" stroke-dasharray="3,1"/>'''
 
                 # Thickness dimension
                 drawing_content += f'''
@@ -660,8 +658,7 @@ try:
   </g>
 
   <!-- Front view -->
-  <g id="front_view" transform="{front_view_transform}">
-    <text x="0" y="-8" font-family="osifont" font-size="3.5" text-anchor="middle">Front View</text>'''
+  <g id="front_view" transform="{front_view_transform}">'''
 
             # Tự động tạo Front View dựa trên geometry - vẽ hướng lên
             if bbox:
