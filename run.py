@@ -569,21 +569,25 @@ try:
                         except:
                             pass
 
+                # Định nghĩa độ dày đường cho dimensions
+                dimension_line_width = "0.25"      # Đường kích thước chính
+                extension_line_width = "0.15"      # Đường gióng (mỏng hơn)
+
                 drawing_content += f'''
     <!-- Dimensions for Top View (Auto-generated) - hình vẽ xuống dưới -->
-    <g stroke="blue" stroke-width="0.25" fill="none">
+    <g stroke="blue" stroke-width="{dimension_line_width}" fill="none">
       <!-- Width dimension -->
       <line x1="0" y1="-10" x2="{actual_width}" y2="-10"/>
-      <line x1="0" y1="-8" x2="0" y2="-2" stroke-width="0.18"/>
-      <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2" stroke-width="0.18"/>
+      <line x1="0" y1="-8" x2="0" y2="-2" stroke-width="{extension_line_width}"/>
+      <line x1="{actual_width}" y1="-8" x2="{actual_width}" y2="-2" stroke-width="{extension_line_width}"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="{actual_width},-10 {actual_width-1.0},-9 {actual_width-1.0},-11" fill="blue"/>
       <text x="{actual_width/2}" y="-17" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">{actual_width:.0f}</text>
 
       <!-- Height dimension -->
       <line x1="{actual_width + 10}" y1="0" x2="{actual_width + 10}" y2="{actual_height}"/>
-      <line x1="{actual_width + 8}" y1="0" x2="{actual_width + 2}" y2="0" stroke-width="0.18"/>
-      <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}" stroke-width="0.18"/>
+      <line x1="{actual_width + 8}" y1="0" x2="{actual_width + 2}" y2="0" stroke-width="{extension_line_width}"/>
+      <line x1="{actual_width + 8}" y1="{actual_height}" x2="{actual_width + 2}" y2="{actual_height}" stroke-width="{extension_line_width}"/>
       <polygon points="{actual_width + 10},0 {actual_width + 9},1.0 {actual_width + 11},1.0" fill="blue"/>
       <polygon points="{actual_width + 10},{actual_height} {actual_width + 9},{actual_height-1.0} {actual_width + 11},{actual_height-1.0}" fill="blue"/>
       <text x="{actual_width + 17}" y="{actual_height/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{actual_width + 17},{actual_height/2})">{actual_height:.0f}</text>'''
@@ -639,7 +643,7 @@ try:
 
                                 drawing_content += f'''
       <!-- Fillet radius dimension R{unique_radius:.0f} -->
-      <line x1="{dim_x}" y1="{dim_y}" x2="{fx}" y2="{fy}" stroke="blue" stroke-width="0.25"/>
+      <line x1="{dim_x}" y1="{dim_y}" x2="{fx}" y2="{fy}" stroke="blue" stroke-width="{dimension_line_width}"/>
       <polygon points="{arrow_tip_x},{arrow_tip_y} {arrow_wing1_x},{arrow_wing1_y} {arrow_wing2_x},{arrow_wing2_y}" fill="blue"/>
       <text x="{dim_x + 2}" y="{dim_y - 1}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}">R{unique_radius:.0f}</text>'''
                                 print(f"Added radius dimension R{unique_radius:.0f} at fillet center ({fx:.1f},{fy:.1f})")
@@ -662,10 +666,12 @@ try:
     </g>
   </g>'''
             else:
-                # Fallback dimensions
+                # Fallback dimensions - cần định nghĩa variables cho fallback case
+                fallback_dimension_line_width = "0.25"
+                fallback_extension_line_width = "0.15"
                 drawing_content += f'''
     <!-- Fallback Dimensions -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="{fallback_dimension_line_width}" fill="none">
       <line x1="0" y1="10" x2="50" y2="10"/>
       <polygon points="0,10 1.0,9 1.0,11" fill="blue"/>
       <polygon points="50,10 49.0,9 49.0,11" fill="blue"/>
@@ -697,21 +703,23 @@ try:
                 # Thickness dimension
                 drawing_content += f'''
     <!-- Thickness dimension -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="{dimension_line_width}" fill="none">
       <line x1="{side_width + 5}" y1="{side_y_offset}" x2="{side_width + 5}" y2="0"/>
-      <line x1="{side_width + 3}" y1="{side_y_offset}" x2="{side_width + 7}" y2="{side_y_offset}"/>
-      <line x1="{side_width + 3}" y1="0" x2="{side_width + 7}" y2="0"/>
+      <line x1="{side_width + 3}" y1="{side_y_offset}" x2="{side_width + 7}" y2="{side_y_offset}" stroke-width="{extension_line_width}"/>
+      <line x1="{side_width + 3}" y1="0" x2="{side_width + 7}" y2="0" stroke-width="{extension_line_width}"/>
       <polygon points="{side_width + 5},{side_y_offset} {side_width + 4.5},{side_y_offset + 1.0} {side_width + 5.5},{side_y_offset + 1.0}" fill="blue"/>
       <polygon points="{side_width + 5},0 {side_width + 4.5},-1.0 {side_width + 5.5},-1.0" fill="blue"/>
       <text x="{side_width + 12}" y="{side_y_offset/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,{side_width + 12},{side_y_offset/2})">{side_height:.0f}</text>
     </g>'''
             else:
-                # Fallback - vẽ trên trục tọa độ
+                # Fallback - vẽ trên trục tọa độ - cần định nghĩa variables cho fallback case
+                fallback_dimension_line_width = "0.25"
+                fallback_extension_line_width = "0.15"
                 fallback_side_height = 3
                 fallback_y_offset = -fallback_side_height
                 drawing_content += f'''
     <rect x="0" y="{fallback_y_offset}" width="50" height="{fallback_side_height}" fill="none" stroke="black" stroke-width="0.7"/>
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="{fallback_dimension_line_width}" fill="none">
       <text x="37" y="{fallback_y_offset/2}" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle" transform="rotate(-90,37,{fallback_y_offset/2})">3</text>
     </g>'''
 
@@ -743,20 +751,22 @@ try:
                 # Width dimension cho front view
                 drawing_content += f'''
     <!-- Width dimension -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="{dimension_line_width}" fill="none">
       <line x1="0" y1="5" x2="{front_width}" y2="5"/>
-      <line x1="0" y1="3" x2="0" y2="-1"/>
-      <line x1="{front_width}" y1="3" x2="{front_width}" y2="-1"/>
+      <line x1="0" y1="3" x2="0" y2="-1" stroke-width="{extension_line_width}"/>
+      <line x1="{front_width}" y1="3" x2="{front_width}" y2="-1" stroke-width="{extension_line_width}"/>
       <polygon points="0,5 1.0,4 1.0,6" fill="blue"/>
       <polygon points="{front_width},5 {front_width-1.0},4 {front_width-1.0},6" fill="blue"/>
       <text x="{front_width/2}" y="10" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">{front_width:.0f}</text>
     </g>'''
             else:
-                # Fallback - vẽ hướng lên
+                # Fallback - vẽ hướng lên - cần định nghĩa variables cho fallback case
+                fallback_dimension_line_width = "0.25"
+                fallback_extension_line_width = "0.15"
                 fallback_front_height = 3
                 drawing_content += f'''
     <rect x="0" y="-{fallback_front_height}" width="50" height="{fallback_front_height}" fill="none" stroke="black" stroke-width="0.7"/>
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="{fallback_dimension_line_width}" fill="none">
       <text x="25" y="10" font-family="Arial, sans-serif" font-size="{dimension_font_size:.1f}" text-anchor="middle">50</text>
     </g>'''
 

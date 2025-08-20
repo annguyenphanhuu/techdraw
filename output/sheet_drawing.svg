@@ -1019,16 +1019,16 @@
     <g stroke="blue" stroke-width="0.25" fill="none">
       <!-- Width dimension -->
       <line x1="0" y1="-10" x2="200.0" y2="-10"/>
-      <line x1="0" y1="-8" x2="0" y2="-2" stroke-width="0.18"/>
-      <line x1="200.0" y1="-8" x2="200.0" y2="-2" stroke-width="0.18"/>
+      <line x1="0" y1="-8" x2="0" y2="-2" stroke-width="0.15"/>
+      <line x1="200.0" y1="-8" x2="200.0" y2="-2" stroke-width="0.15"/>
       <polygon points="0,-10 1.0,-9 1.0,-11" fill="blue"/>
       <polygon points="200.0,-10 199.0,-9 199.0,-11" fill="blue"/>
       <text x="100.0" y="-17" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle">200</text>
 
       <!-- Height dimension -->
       <line x1="210.0" y1="0" x2="210.0" y2="100.0"/>
-      <line x1="208.0" y1="0" x2="202.0" y2="0" stroke-width="0.18"/>
-      <line x1="208.0" y1="100.0" x2="202.0" y2="100.0" stroke-width="0.18"/>
+      <line x1="208.0" y1="0" x2="202.0" y2="0" stroke-width="0.15"/>
+      <line x1="208.0" y1="100.0" x2="202.0" y2="100.0" stroke-width="0.15"/>
       <polygon points="210.0,0 209.0,1.0 211.0,1.0" fill="blue"/>
       <polygon points="210.0,100.0 209.0,99.0 211.0,99.0" fill="blue"/>
       <text x="217.0" y="50.0" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle" transform="rotate(-90,217.0,50.0)">100</text>
@@ -1042,10 +1042,10 @@
   <g id="side_view" transform="translate(45,50.46425000000001) scale(0.51075)">
     <rect x="0" y="-3.0" width="200.0" height="3.0" fill="none" stroke="black" stroke-width="0.7"/>
     <!-- Thickness dimension -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="0.25" fill="none">
       <line x1="205.0" y1="-3.0" x2="205.0" y2="0"/>
-      <line x1="203.0" y1="-3.0" x2="207.0" y2="-3.0"/>
-      <line x1="203.0" y1="0" x2="207.0" y2="0"/>
+      <line x1="203.0" y1="-3.0" x2="207.0" y2="-3.0" stroke-width="0.15"/>
+      <line x1="203.0" y1="0" x2="207.0" y2="0" stroke-width="0.15"/>
       <polygon points="205.0,-3.0 204.5,-2.0 205.5,-2.0" fill="blue"/>
       <polygon points="205.0,0 204.5,-1.0 205.5,-1.0" fill="blue"/>
       <text x="212.0" y="-1.5" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle" transform="rotate(-90,212.0,-1.5)">3</text>
@@ -1056,10 +1056,10 @@
   <g id="front_view" transform="translate(167.15,50.46425000000001) scale(0.51075)">
     <rect x="0" y="-3.0" width="100.0" height="3.0" fill="none" stroke="black" stroke-width="0.7"/>
     <!-- Width dimension -->
-    <g stroke="blue" stroke-width="0.35" fill="none">
+    <g stroke="blue" stroke-width="0.25" fill="none">
       <line x1="0" y1="5" x2="100.0" y2="5"/>
-      <line x1="0" y1="3" x2="0" y2="-1"/>
-      <line x1="100.0" y1="3" x2="100.0" y2="-1"/>
+      <line x1="0" y1="3" x2="0" y2="-1" stroke-width="0.15"/>
+      <line x1="100.0" y1="3" x2="100.0" y2="-1" stroke-width="0.15"/>
       <polygon points="0,5 1.0,4 1.0,6" fill="blue"/>
       <polygon points="100.0,5 99.0,4 99.0,6" fill="blue"/>
       <text x="50.0" y="10" font-family="Arial, sans-serif" font-size="7.0" text-anchor="middle">100</text>
