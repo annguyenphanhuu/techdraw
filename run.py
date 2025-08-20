@@ -176,7 +176,7 @@ try:
                 edges = top_face_edges if top_face_edges else bottom_face_edges
 
             # Đọc template A4 Landscape ISO 5457
-            template_path = os.path.join(os.path.dirname(__file__), "templates", "A4_Landscape_ISO5457_advanced.svg")
+            template_path = os.path.join(os.path.dirname(__file__), "templates", "A4_Landscape_TD.svg")
             if os.path.exists(template_path):
                 with open(template_path, 'r', encoding='utf-8') as f:
                     svg_content = f.read()
@@ -713,31 +713,13 @@ try:
                     hole_desc = ", ".join([f"Ø{hr*2:.0f}mm hole" for hr in hole_radii])
                     part_description += f" with {hole_desc}"
 
-                drawing_content += f'''
-  <!-- Update title block -->
-  <g id="custom_title_data">
-    <text x="108" y="161.2" font-family="osifont" font-size="4" fill="black">{part_name}</text>
-    <text x="108" y="167.2" font-family="osifont" font-size="3.5" fill="black">{part_description}</text>
-    <text x="108" y="185.2" font-family="osifont" font-size="3.5" fill="black">Technical Drawing</text>
-    <text x="237" y="149.2" font-family="osifont" font-size="3.5" fill="black" text-anchor="middle">1:1</text>
-
-    <!-- Material info -->
-    <text x="108" y="173.2" font-family="osifont" font-size="3" fill="black">Material: {part_type.title()}</text>
-  </g>
+                # Không thêm custom title data nữa
+                drawing_content += '''
 
 '''
             else:
+                # Không thêm fallback title data nữa
                 drawing_content += '''
-  <!-- Update title block -->
-  <g id="custom_title_data">
-    <text x="108" y="161.2" font-family="osifont" font-size="4" fill="black">Unknown Part</text>
-    <text x="108" y="167.2" font-family="osifont" font-size="3.5" fill="black">Dimensions not available</text>
-    <text x="108" y="185.2" font-family="osifont" font-size="3.5" fill="black">Technical Drawing</text>
-    <text x="237" y="149.2" font-family="osifont" font-size="3.5" fill="black" text-anchor="middle">1:1</text>
-
-    <!-- Material info -->
-    <text x="108" y="173.2" font-family="osifont" font-size="3" fill="black">Material: Unknown</text>
-  </g>
 
 '''
 
