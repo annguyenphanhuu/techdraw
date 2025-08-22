@@ -7,12 +7,12 @@ from xml.etree import ElementTree as ET
 
 # --- Configuration ---
 script_dir = os.path.dirname(os.path.abspath(__file__))
-step_file_name = "Support_Verin.step"
+step_file_name = "sheet.step"
 output_svg_name = "output.svg"
 template_name = "A4_Landscape_TD.svg"
 
 STEP_FILE_PATH = os.path.join(script_dir, "input", step_file_name)
-OUTPUT_SVG_PATH = os.path.join(script_dir, output_svg_name)
+OUTPUT_SVG_PATH = os.path.join(script_dir, "output", output_svg_name)
 TEMPLATE_PATH = os.path.join(script_dir, "templates", template_name)
 
 # Check if files exist
