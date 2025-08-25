@@ -15,6 +15,12 @@ STEP_FILE_PATH = os.path.join(script_dir, "input", step_file_name)
 OUTPUT_SVG_PATH = os.path.join(script_dir, "output", output_svg_name)
 TEMPLATE_PATH = os.path.join(script_dir, "templates", template_name)
 
+# --- Hole Detection Configuration ---
+MIN_HOLE_RADIUS = 0.5
+MAX_HOLE_RADIUS = 50
+SHOW_CENTER_LINES = True
+SHOW_RADIUS_DIMENSIONS = True
+
 # Check if files exist
 if not os.path.exists(STEP_FILE_PATH):
     print(f"Error: STEP file not found at '{STEP_FILE_PATH}'")
@@ -77,6 +83,134 @@ def add_dimension(svg_group, p1, p2, text, position='top', offset=10, text_offse
         text_elem.text = text
         dim_group.append(text_elem)
 
+
+def add_hole_center_lines(svg_group, hole_info, view_info, scale, offset_x, offset_y):
+    """Adds center lines for a circular hole to the SVG group."""
+    center_3d = hole_info['center']
+    radius = hole_info['radius']
+    normal = hole_info['normal']
+    view_dir_str = view_info['dir']
+
+    # Project the center point onto the view plane
+    center_2d_proj = project_point(center_3d, view_dir_str)
+    center_x = center_2d_proj[0] * scale + offset_x
+    center_y = -center_2d_proj[1] * scale + offset_y
+
+    # Determine if the hole is visible in this view
+    view_vectors = {
+        "front": FreeCAD.Vector(0, 1, 0), # Y-axis
+        "top":   FreeCAD.Vector(0, 0, 1), # Z-axis
+        "right": FreeCAD.Vector(1, 0, 0)  # X-axis
+    }
+    view_vector = view_vectors[view_dir_str]
+
+    # Check if the hole's normal is parallel to the view vector (face-on view)
+    if abs(normal.dot(view_vector)) > 0.99:
+        style = {'stroke': 'black', 'stroke-width': '0.25', 'stroke-dasharray': '4 2'}
+        center_group = ET.SubElement(svg_group, 'g', {'class': 'center-lines'})
+
+        # Add center lines
+        line_length = radius * scale * 1.5
+        ET.SubElement(center_group, 'path', {**style, 'd': f'M {center_x - line_length} {center_y} L {center_x + line_length} {center_y}'})
+        ET.SubElement(center_group, 'path', {**style, 'd': f'M {center_x} {center_y - line_length} L {center_x} {center_y + line_length}'})
+
+def detect_circular_holes(shape, min_radius=0.5, max_radius=50):
+    """Detects circular holes in the shape and returns their properties."""
+    holes = []
+
+    # Analyze all faces to find cylindrical holes
+    for face in shape.Faces:
+        if hasattr(face.Surface, 'Radius'):  # Cylindrical surface
+            radius = face.Surface.Radius
+
+            # Filter by radius range
+            if min_radius <= radius <= max_radius:
+                # Get the axis and center of the cylinder
+                axis = face.Surface.Axis
+                center = face.Surface.Center
+
+                # Check if this is actually a hole (not an external cylinder)
+                # We do this by checking if the face is internal (surrounded by material)
+
+                # A more robust way to check for a hole is to check the face's orientation.
+                # An 'inward' or 'Reversed' orientation typically signifies a hole.
+                if face.Orientation == 'Reversed':
+                    hole_info = {
+                        'center': center,
+                        'radius': radius,
+                        'axis': axis,
+                        'normal': axis.normalize(),
+                        'face': face
+                    }
+                    holes.append(hole_info)
+
+    # Remove duplicates (same center and radius)
+    unique_holes = []
+    for hole in holes:
+        is_duplicate = False
+        for existing in unique_holes:
+            center_dist = hole['center'].distanceToPoint(existing['center'])
+            radius_diff = abs(hole['radius'] - existing['radius'])
+            if center_dist < 0.1 and radius_diff < 0.01:
+                is_duplicate = True
+                break
+        if not is_duplicate:
+            unique_holes.append(hole)
+
+    return unique_holes
+
+def add_radius_dimension(svg_group, hole_info, view_info, scale, offset_x, offset_y):
+    """Adds radius dimension for a circular hole."""
+    center_3d = hole_info['center']
+    radius = hole_info['radius']
+    normal = hole_info['normal']
+    view_dir_str = view_info['dir']
+
+    # Project the center point onto the view plane
+    center_2d_proj = project_point(center_3d, view_dir_str)
+    center_x = center_2d_proj[0] * scale + offset_x
+    center_y = -center_2d_proj[1] * scale + offset_y
+
+    # Determine if the hole is visible in this view (face-on)
+    view_vectors = {
+        "front": FreeCAD.Vector(0, 1, 0),
+        "top":   FreeCAD.Vector(0, 0, 1),
+        "right": FreeCAD.Vector(1, 0, 0)
+    }
+    view_vector = view_vectors[view_dir_str]
+
+    # Only add radius dimension if hole is face-on in this view
+    if abs(normal.dot(view_vector)) > 0.99:
+        radius_scaled = radius * scale
+
+        # Position the radius dimension line at 45 degrees
+        angle = math.pi / 4  # 45 degrees
+        end_x = center_x + radius_scaled * math.cos(angle)
+        end_y = center_y + radius_scaled * math.sin(angle)
+
+        # Leader line from center to radius point
+        style = {'stroke': 'black', 'stroke-width': '0.25', 'fill': 'none'}
+        dim_group = ET.SubElement(svg_group, 'g', {'class': 'radius-dimension'})
+
+        # Radius line
+        ET.SubElement(dim_group, 'path', {
+            **style,
+            'd': f'M {center_x} {center_y} L {end_x} {end_y}',
+            'marker-end': 'url(#arrowhead)'
+        })
+
+        # Radius text
+        text_x = end_x + 5
+        text_y = end_y - 2
+        text_elem = ET.Element('text', {
+            'x': str(text_x),
+            'y': str(text_y),
+            'text-anchor': 'start',
+            'dominant-baseline': 'middle',
+            'font-size': '3.5'
+        })
+        text_elem.text = f"R{radius:.1f}"
+        dim_group.append(text_elem)
 # --- Main Script ---
 doc = FreeCAD.newDocument("TechDrawFinal")
 shape = Part.Shape()
@@ -85,6 +219,11 @@ part_object = doc.addObject("Part::Feature", "Imported_STEP")
 part_object.Shape = shape
 doc.recompute()
 print("STEP file imported successfully.")
+
+# Detect circular holes
+print("Detecting circular holes...")
+holes = detect_circular_holes(shape, min_radius=MIN_HOLE_RADIUS, max_radius=MAX_HOLE_RADIUS)
+print(f"Found {len(holes)} circular holes")
 
 # Load SVG template
 print(f"Loading template: {TEMPLATE_PATH}")
@@ -156,6 +295,8 @@ for name, view in views.items():
     # Get the projected min/max points for the current view direction
     projected_points = [project_point(v.Point, view['dir']) for v in shape.Vertexes]
     projected_min_x = min(p[0] for p in projected_points)
+    projected_max_x = max(p[0] for p in projected_points)
+    projected_min_y = min(p[1] for p in projected_points)
     projected_max_y = max(p[1] for p in projected_points) # Use max_y for top-edge alignment in SVG's Y-down coord system
 
     # Calculate translation to move the object's projected origin (min corner) to the view's top-left position
@@ -167,6 +308,14 @@ for name, view in views.items():
     paths = create_svg_path_from_edges(shape.Edges, view['dir'], scale, trans_x, trans_y)
     for path_data in paths:
         ET.SubElement(view_group, 'path', d=path_data)
+
+    # Add hole center lines and radius dimensions
+    if holes:
+        for hole in holes:
+            if SHOW_CENTER_LINES:
+                add_hole_center_lines(view_group, hole, view, scale, trans_x, trans_y)
+            if SHOW_RADIUS_DIMENSIONS:
+                add_radius_dimension(view_group, hole, view, scale, trans_x, trans_y)
 
 # --- Add Optimized Dimensions ---
 print("Adding optimized dimensions...")
