@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 script_dir = os.path.dirname(os.path.abspath(__file__))
 step_file_name = "sheet.step"
 output_svg_name = "output.svg"
-template_name = "A4_Landscape_TD.svg"
+template_name = "A4_TOLERY.svg"
 
 STEP_FILE_PATH = os.path.join(script_dir, "input", step_file_name)
 OUTPUT_SVG_PATH = os.path.join(script_dir, "output", output_svg_name)
