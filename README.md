@@ -12,36 +12,18 @@ Automatically generates technical drawings (SVG + PDF) from STEP files using Fre
 
 ## Usage
 
-### 1. Direct Function Usage
+1. **Edit the STEP file path** in `test_pdf_generation.py`:
+   ```python
+   # Change this line to your STEP file path
+   step_file = Path("CAD/SUPPORT 1.step")  # Update this path
+   ```
 
-```python
-from pathlib import Path
-from technical_drawing_generator import generate_technical_drawing_from_step
+2. **Run the test script**:
+   ```bash
+   python test_pdf_generation.py
+   ```
 
-# Generate technical drawing from STEP file
-result = generate_technical_drawing_from_step(
-    step_file_path=Path("input/part.step"),
-    output_dir=Path("output"),
-    base_filename="my_part_drawing"  # Optional
-)
-
-print(f"Success: {result['success']}")
-print(f"SVG file: {result['svg_path']}")
-print(f"PDF file: {result['pdf_path']}")
-```
-
-### 2. Class Usage
-
-```python
-from pathlib import Path
-from technical_drawing_generator import TechnicalDrawingGenerator
-
-generator = TechnicalDrawingGenerator()
-success, svg_path, pdf_path, message = generator.generate_technical_drawing(
-    step_file_path=Path("input/part.step"),
-    output_dir=Path("output")
-)
-```
+The script will automatically generate both SVG and PDF files in the `output/` directory.
 
 ## Directory Structure
 
