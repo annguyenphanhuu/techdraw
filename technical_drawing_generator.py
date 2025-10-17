@@ -17,6 +17,7 @@ from datetime import datetime
 # Setup logging
 logger = logging.getLogger(__name__)
 
+
 class TechnicalDrawingGenerator:
     """
     Generates technical drawings from STEP files using the cloned techdraw repository
@@ -52,79 +53,63 @@ class TechnicalDrawingGenerator:
 
         logger.info("Technical drawing setup validated successfully")
 
-    
     def generate_technical_drawing(
-        self, 
-        step_file_path: Path, 
-        output_dir: Path,
-        base_filename: str = None
+            self,
+            step_file_path: Path,
+            output_dir: Path,
+            base_filename: str = None
     ) -> Tuple[bool, Optional[Path], Optional[Path], str]:
         """
         Generate technical drawing from STEP file
-        
-        Args:
-            step_file_path: Path to input STEP file
-            output_dir: Directory to save output files
-            base_filename: Base name for output files (without extension)
-            
-        Returns:
-            Tuple of (success, svg_path, pdf_path, message)
         """
         try:
-            # Validate inputs
             if not step_file_path.exists():
                 return False, None, None, f"STEP file not found: {step_file_path}"
-            
-            # Create output directory
+
             output_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Generate filenames
+
             if base_filename is None:
                 base_filename = step_file_path.stem + "_technical"
-            
+
             svg_output_path = output_dir / f"{base_filename}.svg"
-            
+
             # Generate SVG using FreeCAD
             success, svg_path, message = self._generate_svg_with_freecad(
                 step_file_path, svg_output_path
             )
-            
+
             if not success:
                 return False, None, None, message
-            
+
             # Convert SVG to PDF
             pdf_success, pdf_path, pdf_message = self._convert_svg_to_pdf(svg_path)
-            
+
             if pdf_success:
                 return True, svg_path, pdf_path, "Technical drawing generated successfully"
             else:
                 return True, svg_path, None, f"SVG generated but PDF conversion failed: {pdf_message}"
-                
+
         except Exception as e:
             logger.error(f"Error generating technical drawing: {e}")
             return False, None, None, f"Technical drawing generation failed: {str(e)}"
-    
+
     def _generate_svg_with_freecad(
-        self, 
-        step_file_path: Path, 
-        svg_output_path: Path
+            self,
+            step_file_path: Path,
+            svg_output_path: Path
     ) -> Tuple[bool, Optional[Path], str]:
         """Generate SVG using FreeCAD script"""
-        
         logger.info(f"Starting SVG generation for STEP file: {step_file_path}")
         logger.info(f"Target SVG output path: {svg_output_path}")
-        
+
         # Create modified script content
         script_content = self._create_modified_script(step_file_path, svg_output_path)
-        
-        # Write script to temporary file
+
         try:
-            logger.info("Creating temporary script file...")
             with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
                 f.write(script_content)
                 script_path = f.name
-            
-            # Execute FreeCAD script
+
             logger.info(f"Executing FreeCAD script: {script_path}")
             result = subprocess.run(
                 ["freecadcmd", script_path],
@@ -133,14 +118,12 @@ class TechnicalDrawingGenerator:
                 encoding='utf-8',
                 timeout=120
             )
-            
-            # Clean up script file
+
             try:
                 os.unlink(script_path)
             except:
                 pass
-            
-            # Check results
+
             if result.returncode == 0 and svg_output_path.exists():
                 logger.info(f"SVG generated successfully: {svg_output_path}")
                 return True, svg_output_path, "SVG generation completed"
@@ -150,60 +133,51 @@ class TechnicalDrawingGenerator:
                 logger.error(f"STDOUT: {result.stdout}")
                 logger.error(f"STDERR: {result.stderr}")
                 logger.error(f"SVG output path exists: {svg_output_path.exists()}")
-                
                 return False, None, f"FreeCAD execution failed: {result.stdout}"
-                
+
         except subprocess.TimeoutExpired:
             return False, None, "FreeCAD script execution timeout"
         except Exception as e:
             logger.error(f"Error executing FreeCAD script: {e}")
             return False, None, f"Script execution error: {str(e)}"
-    
+
     def _convert_svg_to_pdf(self, svg_path: Path) -> Tuple[bool, Optional[Path], str]:
         """Convert SVG to PDF using cairosvg"""
         try:
             import cairosvg
-            
             pdf_path = svg_path.with_suffix('.pdf')
-            
             logger.info(f"Converting SVG to PDF: {svg_path} -> {pdf_path}")
-            
             cairosvg.svg2pdf(url=str(svg_path), write_to=str(pdf_path))
-            
             if pdf_path.exists():
                 logger.info(f"PDF generated successfully: {pdf_path}")
                 return True, pdf_path, "PDF conversion completed"
             else:
                 return False, None, "PDF file was not created"
-                
         except ImportError:
             logger.warning("cairosvg not available, trying alternative PDF conversion")
             return self._convert_svg_to_pdf_alternative(svg_path)
         except Exception as e:
             logger.error(f"Error in PDF conversion: {e}")
             return False, None, f"PDF conversion error: {str(e)}"
-    
+
     def _convert_svg_to_pdf_alternative(self, svg_path: Path) -> Tuple[bool, Optional[Path], str]:
-        """Alternative PDF conversion using wkhtmltopdf or other tools"""
+        """Alternative PDF conversion using wkhtmltopdf"""
         try:
             pdf_path = svg_path.with_suffix('.pdf')
-            
-            # Try wkhtmltopdf
             result = subprocess.run([
-                "wkhtmltopdf", 
+                "wkhtmltopdf",
                 "--page-size", "A4",
                 "--orientation", "Landscape",
-                str(svg_path), 
+                str(svg_path),
                 str(pdf_path)
             ], capture_output=True, text=True, timeout=60)
-            
+
             if result.returncode == 0 and pdf_path.exists():
                 logger.info(f"PDF generated using wkhtmltopdf: {pdf_path}")
                 return True, pdf_path, "PDF conversion completed with wkhtmltopdf"
             else:
                 logger.warning("wkhtmltopdf failed, PDF conversion not available")
                 return False, None, "PDF conversion tools not available"
-                
         except FileNotFoundError:
             logger.warning("wkhtmltopdf not found, PDF conversion not available")
             return False, None, "PDF conversion tools not available"
@@ -212,18 +186,17 @@ class TechnicalDrawingGenerator:
             return False, None, f"PDF conversion error: {str(e)}"
 
     def _create_modified_script(self, step_file_path: Path, svg_output_path: Path) -> str:
-        """Create modified FreeCAD script with dynamic paths"""
-
-        # Read the base script
+        """Create modified FreeCAD script with dynamic paths in original style (no timestamps)."""
+        # Read base script
         with open(self.base_script_path, 'r', encoding='utf-8') as f:
             base_script = f.read()
 
-        # Get absolute paths
+        # Absolute paths
         step_file_str = str(step_file_path.absolute()).replace('\\', '/')
         svg_output_str = str(svg_output_path.absolute()).replace('\\', '/')
         template_str = str((self.templates_dir / self.template_name).absolute()).replace('\\', '/')
 
-        # Replace the configuration section
+        # Minimal original-style config (no timestamped filenames)
         config_replacement = f'''# --- Configuration ---
 script_dir = os.path.dirname(os.path.abspath(__file__))
 step_file_name = "sheet.step"
@@ -232,14 +205,24 @@ template_name = "A4_TOLERY.svg"
 
 STEP_FILE_PATH = r"{step_file_str}"
 OUTPUT_SVG_PATH = r"{svg_output_str}"
-TEMPLATE_PATH = r"{template_str}"'''
+TEMPLATE_PATH = r"{template_str}"
 
-        # Find and replace the configuration section
+# Create output directory if it doesn't exist
+os.makedirs(os.path.dirname(OUTPUT_SVG_PATH), exist_ok=True)
+
+# Check if files exist
+if not os.path.exists(STEP_FILE_PATH):
+    print(f"Error: STEP file not found at '{{STEP_FILE_PATH}}'")
+    sys.exit(1)
+if not os.path.exists(TEMPLATE_PATH):
+    print(f"Error: Template file not found at '{{TEMPLATE_PATH}}'")
+    sys.exit(1)
+
+# --- Hole Detection Configuration ---'''
+
+        # Replace existing config dynamically
         import re
-
-        # Pattern to match the configuration section
-        config_pattern = r'# --- Configuration ---.*?TEMPLATE_PATH = os\.path\.join\(script_dir, "templates", template_name\)'
-
+        config_pattern = r'# --- Configuration ---.*?# --- Hole Detection Configuration ---'
         modified_script = re.sub(
             config_pattern,
             config_replacement,
@@ -251,21 +234,11 @@ TEMPLATE_PATH = r"{template_str}"'''
 
 
 def generate_technical_drawing_from_step(
-    step_file_path: Path,
-    output_dir: Path,
-    base_filename: str = None
+        step_file_path: Path,
+        output_dir: Path,
+        base_filename: str = None
 ) -> Dict[str, Any]:
-    """
-    Standalone function to generate technical drawing from STEP file
-
-    Args:
-        step_file_path: Path to input STEP file
-        output_dir: Directory to save output files
-        base_filename: Base name for output files
-
-    Returns:
-        Dictionary with generation results
-    """
+    """Standalone function"""
     try:
         generator = TechnicalDrawingGenerator()
         success, svg_path, pdf_path, message = generator.generate_technical_drawing(
@@ -279,9 +252,8 @@ def generate_technical_drawing_from_step(
             "message": message,
             "timestamp": datetime.now().isoformat()
         }
-
     except Exception as e:
-        logger.error(f"Error in standalone technical drawing generation: {e}")
+        logger.error(f"Error in standalone generation: {e}")
         return {
             "success": False,
             "svg_path": None,

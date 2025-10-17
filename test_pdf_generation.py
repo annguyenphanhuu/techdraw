@@ -17,7 +17,7 @@ def test_pdf_generation():
     """Test PDF generation with the existing STEP file"""
     
     # Input and output paths
-    step_file = Path("CAD/SUPPORT 1.step")
+    step_file = Path("/home/tis/techdraw-update/FICHIER PROMPT/SUPPORT/SUPPORT/SUPPORT 3.step")
     output_dir = Path("output")
     
     print(f"Testing PDF generation...")
@@ -34,8 +34,11 @@ def test_pdf_generation():
         generator = TechnicalDrawingGenerator()
         
         # Generate technical drawing
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"drawing_{timestamp}"
         success, svg_path, pdf_path, message = generator.generate_technical_drawing(
-            step_file, output_dir, "test_drawing"
+            step_file, output_dir, filename
         )
         
         print(f"\nResults:")
